@@ -11,7 +11,7 @@ from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 import speech_recognition as sr
 
-# Load environment variables
+# Load secret variables
 groq_api_key = st.secrets["GROQ_API_KEY"]
 
 # Page configuration
