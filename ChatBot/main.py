@@ -12,8 +12,7 @@ from dotenv import load_dotenv
 import speech_recognition as sr
 
 # Load environment variables
-load_dotenv()
-groq_api_key = os.environ['GROQ_API_KEY']
+groq_api_key = st.secrets["GROQ_API_KEY"]
 
 # Page configuration
 st.set_page_config(
