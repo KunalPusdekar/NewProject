@@ -6,3 +6,4 @@ python-dotenv
 gtts
 SpeechRecognition
 pyaudio
+portaudio
