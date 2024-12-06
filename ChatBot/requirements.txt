@@ -5,4 +5,4 @@ langchain-groq
 python-dotenv
 gtts
 SpeechRecognition
-pyaudio==0.2.14
+pyaudio
