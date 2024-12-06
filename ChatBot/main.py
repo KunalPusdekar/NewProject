@@ -74,10 +74,6 @@ def display_chat_statistics():
 
 def get_voice_input():
     """Capture and process voice input"""
-    if not st.secrets.get("MICROPHONE_ACCESS", False):
-        st.warning("🎙️ Voice input is disabled in this environment.")
-        return ""
-
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         st.info("🎙️ Speak now...")
