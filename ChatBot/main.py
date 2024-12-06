@@ -74,6 +74,10 @@ def display_chat_statistics():
 
 def get_voice_input():
     """Capture and process voice input"""
+    if not st.secrets.get("MICROPHONE_ACCESS", False):
+        st.warning("🎙️ Voice input is disabled in this environment.")
+        return ""
+
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         st.info("🎙️ Speak now...")
@@ -88,7 +92,7 @@ def get_voice_input():
         except sr.RequestError as e:
             st.error(f"⚠️ Could not request results from the speech recognition service: {e}")
         return ""
-
+        
 def text_to_audio(text):
     """Convert text to audio and return a streamable object"""
     tts = gTTS(text, lang='en')
@@ -98,6 +102,7 @@ def text_to_audio(text):
     return audio_buffer
 
 def main():
+    
     initialize_session_state()
 
     # Sidebar Configuration
