@@ -9,6 +9,7 @@ from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain_groq import ChatGroq
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
+import speech_recognition as sr
 
 # Load secret variables
 groq_api_key = st.secrets["GROQ_API_KEY"]
@@ -71,6 +72,23 @@ def display_chat_statistics():
         with col2:
             st.metric("Duration", f"{duration.seconds // 60}m {duration.seconds % 60}s")
 
+def get_voice_input():
+    """Capture and process voice input"""
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        st.info("🎙️ Speak now...")
+        try:
+            audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)
+            text = recognizer.recognize_google(audio)
+            return text
+        except sr.WaitTimeoutError:
+            st.warning("⏳ Listening timed out. Please try again.")
+        except sr.UnknownValueError:
+            st.warning("⚠️  Could not understand the audio. Please try again.")
+        except sr.RequestError as e:
+            st.error(f"Could not request results from the speech recognition service: {e}")
+        return ""
+        
 def text_to_audio(text):
     """Convert text to audio and return a streamable object"""
     tts = gTTS(text, lang='en')
@@ -171,13 +189,27 @@ def main():
         help="Type your message and press Shift + Enter or click the Send button"
     )
 
-    # Button section below the input box
-    col1, col2 ,col3 = st.columns([5 ,1, 1])
-    
+   # Button section below the input box
+    col1, col2, col3 = st.columns([5, 1, 1])
+    with col1:
+        if st.button("🎙️ Use Voice Input"):
+            voice_input = get_voice_input()
+            if voice_input:
+                with st.spinner('🤔 Thinking...'):
+                    try:
+                        response = conversation(voice_input)
+                        st.session_state.chat_history.append({
+                            'human': voice_input,
+                            'AI': response['response']
+                        })
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"⚠️ Error: {str(e)}")
+
     with col2:
         if st.button("📤 Send") and user_input.strip():
             if not st.session_state.start_time:
-                st.session_state.start_time = datetime.now()  # Set start time when the chat begins
+              st.session_state.start_time = datetime.now()  # Set start time when the chat begins
             with st.spinner('🤔 Thinking...'):
                 try:
                     response = conversation(user_input)
@@ -192,7 +224,7 @@ def main():
     with col3:
         if st.button("🔄 New Topic"):
             memory.clear()
-            st.success("Memory cleared for new topic!")
+            st.success("Memory cleared for new topic!") 
 
     # Footer
     st.markdown("---")
@@ -206,6 +238,8 @@ def main():
         <p style="color:#777770; font-size: 18px;">🤖 Built by Kunal Pusdekar 🚀</p>
       </div>
     """, unsafe_allow_html=True)
+
+
 
 if __name__ == "__main__":
     main()
