@@ -91,7 +91,7 @@ def main():
         st.subheader("Model Selection")
         model = st.selectbox(
             'Choose your model:',
-            ['gemma2-9b-it', 'mixtral-8x7b-32768', 'llama2-70b-4096'],
+            ['gemma2-9b-it', 'mixtral-8x7b-32768', 'llama3-70b-8192'],
             help="Select the AI model for your conversation"
         )
         
